@@ -1,5 +1,6 @@
 from database.DB_connect import DBConnect
 from model.fermata import Fermata
+from model.connessione import Connessione
 
 
 class DAO():
@@ -20,3 +21,49 @@ class DAO():
         conn.close()
         return result
 
+    @staticmethod
+    def getAllEdges(v1, v2):
+        conn = DBConnect.get_connection()
+
+        result = []
+
+        cursor = conn.cursor(dictionary=True)
+        query = """select * from metroparis.connessione c 
+                where c.id_stazP = %s and c.id_stazA = %s"""
+        cursor.execute(query, (v1.id_fermata, v2.id_fermata,))
+        for row in cursor:
+            result.append(row)
+        cursor.close()
+        conn.close()
+        return result
+
+    @staticmethod
+    def getEdgesVicini(v1):
+        conn = DBConnect.get_connection()
+
+        result = []
+
+        cursor = conn.cursor(dictionary=True)
+        query = """select * from connessione c 
+                        where c.id_stazP = %s"""
+        cursor.execute(query, (v1.id_fermata,))
+        for row in cursor:
+            result.append(Connessione(row["id_connessione"], row["id_linea"], row["id_stazP"], row["id_stazA"]))
+        cursor.close()
+        conn.close()
+        return result
+
+    @staticmethod
+    def get_all_connessioni():
+        conn = DBConnect.get_connection()
+
+        result = []
+
+        cursor = conn.cursor(dictionary=True)
+        query = """select * from connessione c """
+        cursor.execute(query)
+        for row in cursor:
+            result.append(Connessione(row["id_connessione"], row["id_linea"], row["id_stazP"], row["id_stazA"]))
+        cursor.close()
+        conn.close()
+        return result

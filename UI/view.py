@@ -56,7 +56,6 @@ class View(ft.UserControl):
 
         # Row with listview
         self.lst_result = ft.ListView(expand=1, spacing=10, padding=20, auto_scroll=False)
-
         self._page.add(row1, row2, self.lst_result)
 
         self._page.update()
