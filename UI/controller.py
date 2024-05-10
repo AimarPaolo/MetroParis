@@ -8,7 +8,7 @@ class Controller:
         # the model, which implements the logic of the program and holds the data
         self._model = model
 
-    def handleCreaGrafo(self,e):
+    def handleCreaGrafo(self, e):
         self._model.buildGraph()
         n_nodes = self._model.getNumNodes()
         nEdges = self._model.getNumEdges()
@@ -16,11 +16,18 @@ class Controller:
         self._view.lst_result.controls.append(ft.Text("Grafo correttamente creato"))
         self._view.lst_result.controls.append(ft.Text(f"il grafo ha {n_nodes} nodi."))
         self._view.lst_result.controls.append(ft.Text(f"il grafo ha {nEdges} archi."))
+        self._view._btnCalcola.disabled = False
         self._view.update_page()
 
     def handleCercaRaggiungibili(self, e):
-        pass
-
+        #visited = self._model.getBFSnodes(self._fermataPartenza)
+        #BFS usato magari per i cammini minimi, in caso di grafo connesso DFS è più efficiente
+        visited = self._model.getDFSnodes(self._fermataPartenza)
+        self._view.lst_result.controls.clear()
+        self._view.lst_result.controls.append(ft.Text(f"Dalla stazione {self._fermataPartenza} posso raggiungere {len(visited)} stazioni."))
+        for v in visited:
+            self._view.lst_result.controls.append(ft.Text(v))
+        self._view.update_page()
     def loadFermate(self, dd: ft.Dropdown()):
         fermate = self._model.fermate
 
@@ -34,6 +41,21 @@ class Controller:
                 dd.options.append(ft.dropdown.Option(text=f.nome,
                                                      data=f,
                                                      on_click=self.read_DD_Arrivo))
+
+    def handleGraphPesato(self):
+        self._model.buildGraphPesato()
+        nNode = self._model.getNumNodes()
+        nEdge = self._model.getNumEdges()
+        archiPesoMaggiore = self._model.getArchiPesoMaggiore()
+
+        self._view.lst_result.controls.clear()
+        self._view.lst_result.controls.append(ft.Text(f"il grafo è stato correttamente creato"))
+        self._view.lst_result.controls.append(ft.Text(f"il grafo ha {nNode} nodi."))
+        self._view.lst_result.controls.append(ft.Text(f"il grafo ha {nEdge} archi."))
+        for a in archiPesoMaggiore:
+            self._view.lst_result.controls.append(ft.Text(a))
+        self._view.update_page()
+
 
     def read_DD_Partenza(self,e):
         print("read_DD_Partenza called ")
